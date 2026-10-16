@@ -20,6 +20,7 @@ if (!$printExperts || !$contestantsList || !$modules): ?>
             <div class="print-sheet" <?= $pageBreak ? 'style="page-break-before: always;"' : '' ?>>
                 <?php $pageBreak = true; ?>
                 <div class="print-header">
+                    <?php print_brand_logo(); ?>
                     <h1>Протокол оценивания эксперта</h1>
                     <p><strong><?= e($competition['title']) ?></strong></p>
                     <p>Компетенция: <?= e($specialty['name']) ?></p>

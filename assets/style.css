@@ -297,6 +297,33 @@ th, td {
     text-align: left;
     vertical-align: top;
 }
+.data-table th,
+.data-table td {
+    vertical-align: middle;
+    border-bottom: 1px solid var(--line);
+}
+/* Не ставить display:flex на td — ломает vertical-align в таблице */
+.data-table td.col-actions {
+    vertical-align: middle;
+    text-align: right;
+    white-space: nowrap;
+}
+.data-table td.col-actions .btn,
+.data-table td.col-actions .inline-form {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 0 0 0.35rem;
+}
+.data-table td.col-actions .btn:first-child,
+.data-table td.col-actions .inline-form:first-child {
+    margin-left: 0;
+}
+.inline-form {
+    display: inline-flex;
+    margin: 0;
+    vertical-align: middle;
+}
 th {
     background: #f4f7fa;
     font-size: 0.9rem;
@@ -476,7 +503,53 @@ select.score-input {
 .score-matrix td.points-col { text-align: left; }
 .score-matrix tbody tr:hover td { background: #fafcfe; }
 .module-block { margin-bottom: 1.5rem; }
-.module-block h3 { margin: 0 0 0.75rem; }
+.module-block h3 { margin: 0 0 0.15rem; }
+.module-points-sum {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+.criteria-bulk-form { margin: 0 0 1rem; }
+.criteria-bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f7f9fb;
+}
+.criteria-bulk-bar .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.data-table .col-check {
+    width: 2.25rem;
+    text-align: center;
+    vertical-align: middle;
+}
+.data-table .col-check input {
+    width: 1.05rem;
+    height: 1.05rem;
+    cursor: pointer;
+}
+.data-table tfoot td {
+    border-top: 2px solid var(--line);
+    background: #f4f7fa;
+}
+.import-box {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1rem;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    background: var(--bg, #f7f8fa);
+}
+.import-box summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+.import-box[open] summary { margin-bottom: 0.25rem; }
 
 .auth-page {
     display: grid;
@@ -498,11 +571,34 @@ select.score-input {
     background: #fff;
     color: #000;
     font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    width: 100%;
 }
-.print-page .container { max-width: 100%; }
+.print-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    box-sizing: border-box;
+}
 .print-header {
     text-align: center;
     margin-bottom: 1.25rem;
+}
+.print-brand {
+    margin: 0 0 0.65rem;
+}
+.print-brand-logo {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    max-width: min(280px, 70%);
+    max-height: 4.5rem;
+    object-fit: contain;
+    object-position: center;
+    aspect-ratio: 332 / 123;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 .print-header h1 {
     font-size: 1.25rem;
@@ -510,6 +606,15 @@ select.score-input {
     text-transform: uppercase;
 }
 .print-header p { margin: 0.15rem 0; }
+@media print {
+    .print-brand-logo {
+        width: auto !important;
+        height: auto !important;
+        max-width: 240px;
+        max-height: 3.5rem;
+        object-fit: contain !important;
+    }
+}
 .print-meta { margin: 1rem 0; }
 .print-table th, .print-table td {
     border: 1px solid #000;
@@ -523,42 +628,131 @@ select.score-input {
     margin-top: 2.5rem;
 }
 .print-sheet { margin-bottom: 1rem; }
-.print-matrix th, .print-matrix td { font-size: 0.9rem; }
-.print-matrix .empty-cell { min-width: 2.5rem; height: 1.6rem; }
+.print-table { width: 100%; border-collapse: collapse; }
+.print-landscape .print-container {
+    max-width: none;
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+}
+.print-landscape .print-sheet {
+    width: 100%;
+}
+.print-landscape .table-wrap {
+    width: 100%;
+    overflow: visible;
+}
+.print-landscape .print-header {
+    margin-bottom: 0.45rem;
+}
+.print-landscape .print-header h1 {
+    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+}
+.print-landscape .print-header p {
+    margin: 0.05rem 0;
+    font-size: 0.8rem;
+}
+.print-landscape .print-brand {
+    margin-bottom: 0.25rem;
+}
+.print-landscape .print-brand-logo {
+    width: auto !important;
+    height: auto !important;
+    max-width: 200px;
+    max-height: 2.6rem;
+    object-fit: contain !important;
+}
+.print-landscape .print-signatures {
+    margin-top: 0.85rem;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+.print-landscape .print-table {
+    width: 100%;
+    table-layout: fixed;
+}
+.print-landscape .print-table th,
+.print-landscape .print-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    padding: 0.18rem 0.28rem;
+    vertical-align: top;
+}
+.print-matrix th, .print-matrix td { font-size: 0.78rem; line-height: 1.2; }
+.print-matrix col.col-aspect { width: 18%; }
+.print-matrix col.col-desc { width: 42%; }
+.print-matrix col.col-points { width: 8%; }
+.print-matrix col.col-score { width: auto; }
+.print-matrix .cell-aspect { font-weight: 600; }
+.print-matrix .cell-desc {
+    text-align: left;
+    font-size: 0.72rem;
+    line-height: 1.15;
+    white-space: pre-wrap;
+}
+.print-matrix .cell-points {
+    font-size: 0.72rem;
+    text-align: center;
+    white-space: nowrap;
+}
+.print-matrix .empty-cell {
+    min-width: 1.4rem;
+    height: 1.35rem;
+}
+.print-landscape .print-matrix .empty-cell {
+    min-width: 0;
+    width: auto;
+    height: 1.25rem;
+}
 .print-matrix th.contestant-vhead {
     vertical-align: bottom;
-    width: 2.2rem;
-    max-width: 2.4rem;
-    padding: 0.35rem 0.15rem;
-    height: 11rem;
+    width: 1.7rem;
+    max-width: 2rem;
+    padding: 0.2rem 0.1rem;
+    height: 7.5rem;
 }
 .print-matrix .contestant-vhead-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.35rem;
-    min-height: 10rem;
-}
-.print-matrix .contestant-vnum {
-    font-size: 0.75rem;
-    font-weight: 700;
-    writing-mode: horizontal-tb;
+    min-height: 6.8rem;
 }
 .print-matrix .contestant-vname {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     white-space: nowrap;
     font-weight: 600;
-    font-size: 0.85rem;
-    line-height: 1.1;
-    max-height: 9rem;
+    font-size: 0.72rem;
+    line-height: 1.05;
+    max-height: 6.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.print-matrix tbody tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
 @media print {
     .print-matrix th.contestant-vhead {
-        height: 12rem;
+        height: 7.5rem;
+    }
+    .print-landscape .print-brand-logo {
+        width: auto !important;
+        height: auto !important;
+        max-width: 180px;
+        max-height: 2.2rem;
+        object-fit: contain !important;
+    }
+    .print-landscape .print-matrix th,
+    .print-landscape .print-matrix td {
+        font-size: 8pt;
+        padding: 2px 4px;
+    }
+    .print-landscape .print-matrix .cell-desc {
+        font-size: 7.5pt;
+        line-height: 1.12;
     }
 }
 
@@ -610,11 +804,32 @@ select.score-input {
 .empty-cell { min-width: 3rem; height: 1.4rem; }
 
 @media print {
-    body { background: #fff; }
+    html, body {
+        background: #fff;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
     .no-print, .app-header { display: none !important; }
     .card { border: none; box-shadow: none; padding: 0; }
     .container { padding: 0; }
     a { color: #000; text-decoration: none; }
+    body.print-page .print-container {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    body.print-page .print-sheet,
+    body.print-page .table-wrap,
+    body.print-page .print-table {
+        width: 100% !important;
+        max-width: none !important;
+    }
+    body.print-landscape .print-table tbody tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
 }
 
 @media (max-width: 720px) {

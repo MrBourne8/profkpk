@@ -11,19 +11,11 @@
         <?php if ($isEdit): ?>
             <input type="hidden" name="id" value="<?= (int) $contestant['id'] ?>">
         <?php endif; ?>
-        <div class="form-grid">
-            <label>Номер
-                <input type="text" name="number" required value="<?= e($contestant['number'] ?? '') ?>">
-            </label>
-            <label>Группа
-                <input type="text" name="group_name" value="<?= e($contestant['group_name'] ?? '') ?>">
-            </label>
-        </div>
         <label>ФИО
             <input type="text" name="full_name" required value="<?= e($contestant['full_name'] ?? '') ?>">
         </label>
-        <label>Порядок
-            <input type="number" name="sort_order" value="<?= (int) ($contestant['sort_order'] ?? 0) ?>">
+        <label>Группа
+            <input type="text" name="group_name" value="<?= e($contestant['group_name'] ?? '') ?>">
         </label>
         <div class="toolbar">
             <button type="submit" class="btn btn-primary">Сохранить</button>

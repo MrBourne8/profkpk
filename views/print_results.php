@@ -1,4 +1,5 @@
 <div class="print-header">
+    <?php print_brand_logo(); ?>
     <h1>Итоговый протокол результатов</h1>
     <p><strong><?= e($competition['title']) ?></strong></p>
     <p>Специальность (компетенция): <?= e($specialty['name']) ?></p>
@@ -18,7 +19,6 @@
         <thead>
         <tr>
             <th>Место</th>
-            <th>№</th>
             <th>ФИО конкурсанта</th>
             <th>Группа</th>
             <?php foreach ($modules as $m): ?>
@@ -31,7 +31,6 @@
         <?php foreach ($rows as $row): ?>
             <tr>
                 <td><?= $row['place'] !== null ? (int) $row['place'] : '' ?></td>
-                <td><?= e($row['contestant']['number']) ?></td>
                 <td><?= e($row['contestant']['full_name']) ?></td>
                 <td><?= e($row['contestant']['group_name'] ?: '') ?></td>
                 <?php foreach ($modules as $m): ?>

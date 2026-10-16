@@ -17,6 +17,7 @@ if (!$printExperts || !$modules): ?>
         <div class="print-sheet" <?= $pageBreak ? 'style="page-break-before: always;"' : '' ?>>
             <?php $pageBreak = true; ?>
             <div class="print-header">
+                <?php print_brand_logo(); ?>
                 <h1>Протокол оценивания эксперта</h1>
                 <p><strong><?= e($competition['title']) ?></strong></p>
                 <p>Компетенция: <?= e($specialty['name']) ?></p>
@@ -34,15 +35,22 @@ if (!$printExperts || !$modules): ?>
             <?php else: ?>
                 <div class="table-wrap">
                     <table class="print-table print-matrix">
+                        <colgroup>
+                            <col class="col-aspect">
+                            <col class="col-desc">
+                            <col class="col-points">
+                            <?php foreach ($contestantsList as $c): ?>
+                                <col class="col-score">
+                            <?php endforeach; ?>
+                        </colgroup>
                         <thead>
                         <tr>
-                            <th style="min-width:8rem">Аспект</th>
-                            <th style="min-width:12rem">Расшифровка аспекта</th>
-                            <th style="min-width:5rem">Баллы</th>
+                            <th>Аспект</th>
+                            <th>Расшифровка аспекта</th>
+                            <th>Баллы</th>
                             <?php foreach ($contestantsList as $c): ?>
                                 <th class="contestant-vhead">
                                     <div class="contestant-vhead-inner">
-                                        <span class="contestant-vnum">№ <?= e($c['number']) ?></span>
                                         <span class="contestant-vname"><?= e($c['full_name']) ?></span>
                                     </div>
                                 </th>
@@ -52,9 +60,9 @@ if (!$printExperts || !$modules): ?>
                         <tbody>
                         <?php foreach ($crits as $cr): ?>
                             <tr>
-                                <td><?= e($cr['title']) ?></td>
-                                <td style="font-size:0.9em;text-align:left"><?= e($cr['description'] ?: '') ?></td>
-                                <td style="font-size:0.85em"><?= e(criterion_format_allowed_label($cr)) ?></td>
+                                <td class="cell-aspect"><?= e($cr['title']) ?></td>
+                                <td class="cell-desc"><?= e($cr['description'] ?: '') ?></td>
+                                <td class="cell-points"><?= e(criterion_format_allowed_label($cr)) ?></td>
                                 <?php foreach ($contestantsList as $c): ?>
                                     <td class="empty-cell"></td>
                                 <?php endforeach; ?>

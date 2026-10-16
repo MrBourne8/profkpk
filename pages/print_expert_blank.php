@@ -90,6 +90,7 @@ render($view, [
     'contestants' => $contestants,
     'printExperts' => $printExperts,
     'format' => $format,
+    'printLandscape' => true,
     'backUrl' => url('print_expert_blank', array_filter([
         'specialty_id' => $specialtyId,
         'module_id' => $moduleId ?: null,

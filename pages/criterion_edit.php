@@ -24,9 +24,25 @@ if (!$module) {
 }
 $specialty = specialty_require_access($pdo, (int) $module['specialty_id']);
 
+$moduleCriteria = db_fetch_all(
+    $pdo,
+    'SELECT id FROM criteria WHERE module_id = ? ORDER BY sort_order, id',
+    [$moduleId]
+);
+$aspectNumber = count($moduleCriteria) + 1;
+if ($criterion) {
+    foreach ($moduleCriteria as $i => $row) {
+        if ((int) $row['id'] === (int) $criterion['id']) {
+            $aspectNumber = $i + 1;
+            break;
+        }
+    }
+}
+
 render('criterion_edit', [
     'pageTitle' => $criterion ? 'Редактирование критерия' : 'Новый критерий',
     'specialty' => $specialty,
     'module' => $module,
     'criterion' => $criterion,
+    'aspectNumber' => $aspectNumber,
 ]);

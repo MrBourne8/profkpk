@@ -87,6 +87,24 @@ function url(string $route, array $params = []): string
     return $base . '/index.php?' . http_build_query($query);
 }
 
+function asset_url(string $path): string
+{
+    global $config;
+    return rtrim($config['base_path'] ?? '', '/') . '/' . ltrim($path, '/');
+}
+
+/** Логотип движения «Профессионалы» для печатных бланков и протоколов. */
+function print_brand_logo(): void
+{
+    $relative = 'assets/brand/professionals-logo.svg';
+    if (!is_file(dirname(__DIR__) . '/' . $relative)) {
+        return;
+    }
+    echo '<div class="print-brand">';
+    echo '<img class="print-brand-logo" src="' . e(asset_url($relative)) . '" alt="Всероссийское чемпионатное движение «Профессионалы»">';
+    echo '</div>';
+}
+
 function status_label(string $status): string
 {
     return match ($status) {
@@ -144,7 +162,14 @@ function criterion_parse_allowed_values(null|string|array $raw): array
         if ($item === '' || $item === null) {
             continue;
         }
-        $num = (float) str_replace(',', '.', (string) $item);
+        // Поддержка 0.5, 0,5 и лишних нулей вроде 00.5
+        $raw = trim((string) $item);
+        $raw = str_replace([' ', ','], ['', '.'], $raw);
+        if ($raw === '' || !is_numeric($raw)) {
+            continue;
+        }
+        $num = (float) $raw;
+        // 0 уже всегда есть в списке оценок — здесь только значения > 0
         if ($num <= 0) {
             continue;
         }

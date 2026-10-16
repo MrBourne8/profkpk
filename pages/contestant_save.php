@@ -15,13 +15,11 @@ if ($id > 0) {
 }
 specialty_assert_unlocked($pdo, $specialtyId);
 
-$number = post_string('number');
 $fullName = post_string('full_name');
 $groupName = post_string('group_name') ?: null;
-$sortOrder = post_int('sort_order');
 
-if ($number === '' || $fullName === '') {
-    flash_set('error', 'Укажите номер и ФИО.');
+if ($fullName === '') {
+    flash_set('error', 'Укажите ФИО.');
     redirect($id > 0 ? url('contestant_edit', ['id' => $id]) : url('contestant_edit', ['specialty_id' => $specialtyId]));
 }
 
@@ -29,10 +27,19 @@ try {
     if ($id > 0) {
         db_exec(
             $pdo,
-            'UPDATE contestants SET number = ?, full_name = ?, group_name = ?, sort_order = ? WHERE id = ?',
-            [$number, $fullName, $groupName, $sortOrder, $id]
+            'UPDATE contestants SET full_name = ?, group_name = ? WHERE id = ?',
+            [$fullName, $groupName, $id]
         );
     } else {
+        $maxRow = db_fetch(
+            $pdo,
+            'SELECT COALESCE(MAX(CAST(number AS UNSIGNED)), 0) AS m,
+                    COALESCE(MAX(sort_order), 0) AS s
+             FROM contestants WHERE specialty_id = ?',
+            [$specialtyId]
+        );
+        $number = (string) (((int) ($maxRow['m'] ?? 0)) + 1);
+        $sortOrder = ((int) ($maxRow['s'] ?? 0)) + 1;
         db_exec(
             $pdo,
             'INSERT INTO contestants (specialty_id, number, full_name, group_name, sort_order) VALUES (?, ?, ?, ?, ?)',
@@ -41,7 +48,7 @@ try {
     }
     flash_set('success', 'Конкурсант сохранён.');
 } catch (PDOException $e) {
-    flash_set('error', 'Не удалось сохранить: возможно, номер уже используется.');
+    flash_set('error', 'Не удалось сохранить конкурсанта.');
 }
 
 redirect(url('specialty_settings', ['id' => $specialtyId, 'tab' => 'contestants']));
