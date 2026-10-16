@@ -29,6 +29,8 @@ body {
     min-height: 100vh;
 }
 
+.slak {}
+
 a { color: var(--brand); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
