@@ -1,0 +1,214 @@
+<?php
+
+declare(strict_types=1);
+
+function e(?string $value): string
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function redirect(string $url): never
+{
+    header('Location: ' . $url);
+    exit;
+}
+
+function flash_set(string $type, string $message): void
+{
+    $_SESSION['_flash'] = ['type' => $type, 'message' => $message];
+}
+
+function flash_get(): ?array
+{
+    if (!isset($_SESSION['_flash'])) {
+        return null;
+    }
+    $flash = $_SESSION['_flash'];
+    unset($_SESSION['_flash']);
+    return $flash;
+}
+
+function csrf_token(): string
+{
+    if (empty($_SESSION['_csrf'])) {
+        $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['_csrf'];
+}
+
+function csrf_field(): string
+{
+    return '<input type="hidden" name="_csrf" value="' . e(csrf_token()) . '">';
+}
+
+function csrf_verify(): void
+{
+    $token = $_POST['_csrf'] ?? '';
+    if (!is_string($token) || !hash_equals(csrf_token(), $token)) {
+        http_response_code(403);
+        exit('Неверный CSRF-токен. Обновите страницу и попробуйте снова.');
+    }
+}
+
+function request_method(): string
+{
+    return strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+}
+
+function post_string(string $key, string $default = ''): string
+{
+    $value = $_POST[$key] ?? $default;
+    return is_string($value) ? trim($value) : $default;
+}
+
+function post_int(string $key, int $default = 0): int
+{
+    return isset($_POST[$key]) ? (int) $_POST[$key] : $default;
+}
+
+function post_float(string $key, ?float $default = null): ?float
+{
+    if (!isset($_POST[$key]) || $_POST[$key] === '') {
+        return $default;
+    }
+    return (float) str_replace(',', '.', (string) $_POST[$key]);
+}
+
+function get_int(string $key, int $default = 0): int
+{
+    return isset($_GET[$key]) ? (int) $_GET[$key] : $default;
+}
+
+function url(string $route, array $params = []): string
+{
+    global $config;
+    $base = rtrim($config['base_path'] ?? '', '/');
+    $query = array_merge(['r' => $route], $params);
+    return $base . '/index.php?' . http_build_query($query);
+}
+
+function status_label(string $status): string
+{
+    return match ($status) {
+        'draft' => 'Черновик',
+        'active' => 'Активный',
+        'finished' => 'Завершён',
+        default => $status,
+    };
+}
+
+/** Вносить оценки можно только при статусе конкурса «Активный». */
+function competition_allows_scoring(?array $competition): bool
+{
+    return $competition && ($competition['status'] ?? '') === 'active';
+}
+
+function specialty_competition(PDO $pdo, int $specialtyId): ?array
+{
+    return db_fetch(
+        $pdo,
+        'SELECT c.* FROM competitions c
+         INNER JOIN specialties s ON s.competition_id = c.id
+         WHERE s.id = ?',
+        [$specialtyId]
+    );
+}
+
+function format_points(?float $value): string
+{
+    if ($value === null) {
+        return '—';
+    }
+    $formatted = number_format($value, 2, '.', '');
+    return rtrim(rtrim($formatted, '0'), '.') ?: '0';
+}
+
+/**
+ * Разбор допустимых значений критерия (кроме 0), максимум 5 штук, по возрастанию.
+ *
+ * @return list<float>
+ */
+function criterion_parse_allowed_values(null|string|array $raw): array
+{
+    if (is_array($raw)) {
+        $decoded = $raw;
+    } else {
+        $decoded = json_decode((string) ($raw ?? '[]'), true);
+    }
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    $values = [];
+    foreach ($decoded as $item) {
+        if ($item === '' || $item === null) {
+            continue;
+        }
+        $num = (float) str_replace(',', '.', (string) $item);
+        if ($num <= 0) {
+            continue;
+        }
+        $key = format_points($num);
+        $values[$key] = $num;
+        if (count($values) >= 5) {
+            break;
+        }
+    }
+    $list = array_values($values);
+    sort($list, SORT_NUMERIC);
+    return $list;
+}
+
+/**
+ * Полный список вариантов для выбора: всегда включает 0.
+ *
+ * @return list<float>
+ */
+function criterion_score_options(array $criterion): array
+{
+    $allowed = criterion_parse_allowed_values($criterion['allowed_values'] ?? []);
+    return array_merge([0.0], $allowed);
+}
+
+function criterion_format_allowed_label(array $criterion): string
+{
+    $opts = criterion_score_options($criterion);
+    return implode(', ', array_map(static fn($v) => format_points($v), $opts));
+}
+
+function criterion_is_allowed_score(array $criterion, float $points): bool
+{
+    foreach (criterion_score_options($criterion) as $opt) {
+        if (abs($opt - $points) < 0.00001) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function render(string $view, array $data = [], string $layout = 'layout'): void
+{
+    global $config, $pdo;
+    extract($data, EXTR_SKIP);
+    $flash = flash_get();
+    $viewFile = dirname(__DIR__) . '/views/' . $view . '.php';
+    if (!is_file($viewFile)) {
+        http_response_code(404);
+        echo 'Представление не найдено: ' . e($view);
+        return;
+    }
+    ob_start();
+    require $viewFile;
+    $content = ob_get_clean();
+    require dirname(__DIR__) . '/views/' . $layout . '.php';
+}
+
+function require_install_or_redirect(): void
+{
+    global $pdo;
+    try {
+        $pdo->query('SELECT 1 FROM users LIMIT 1');
+    } catch (Throwable $e) {
+        redirect('install.php');
+    }
+}

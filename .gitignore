@@ -1,0 +1,12 @@
+# Дампы БД
+/backups/*.sql
+!/backups/.gitkeep
+
+# Локальные настройки (если появятся)
+.env
+.env.*
+
+# Служебное
+Thumbs.db
+.DS_Store
+*.log
