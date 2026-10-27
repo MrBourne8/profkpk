@@ -32,6 +32,7 @@
                 <table>
                     <thead>
                     <tr>
+                        <th>РМ</th>
                         <th>ФИО</th>
                         <th>Группа</th>
                         <th></th>
@@ -40,6 +41,7 @@
                     <tbody>
                     <?php foreach ($contestants as $c): ?>
                         <tr>
+                            <td><strong><?= e(contestant_workplace_label($c)) ?></strong></td>
                             <td><?= e($c['full_name']) ?></td>
                             <td><?= e($c['group_name'] ?: '—') ?></td>
                             <td class="actions">

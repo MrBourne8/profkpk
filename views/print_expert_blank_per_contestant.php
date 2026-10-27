@@ -30,7 +30,7 @@ if (!$printExperts || !$contestantsList || !$modules): ?>
                         <?= e($expert['full_name']) ?>
                     </p>
                     <p>
-                        Конкурсант № <?= e($contestant['number']) ?> —
+                        <?= e(contestant_workplace_label($contestant)) ?> —
                         <strong><?= e($contestant['full_name']) ?></strong>
                         <?php if (!empty($contestant['group_name'])): ?>
                             (<?= e($contestant['group_name']) ?>)

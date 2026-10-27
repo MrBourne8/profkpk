@@ -30,9 +30,10 @@ if (!$modules) {
 }
 
 $competition = db_fetch($pdo, 'SELECT * FROM competitions WHERE id = ?', [(int) $specialty['competition_id']]);
+contestants_ensure_workplace_column($pdo);
 $contestants = db_fetch_all(
     $pdo,
-    'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY sort_order, id',
+    'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY workplace IS NULL, workplace, sort_order, id',
     [$specialtyId]
 );
 $experts = db_fetch_all($pdo, 'SELECT * FROM experts WHERE specialty_id = ? ORDER BY number', [$specialtyId]);

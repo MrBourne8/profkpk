@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 auth_check();
 csrf_verify();
+contestants_ensure_workplace_column($pdo);
 
 $id = post_int('id');
 $specialtyId = post_int('specialty_id');
@@ -30,6 +31,7 @@ try {
             'UPDATE contestants SET full_name = ?, group_name = ? WHERE id = ?',
             [$fullName, $groupName, $id]
         );
+        flash_set('success', 'Конкурсант сохранён.');
     } else {
         $maxRow = db_fetch(
             $pdo,
@@ -40,13 +42,15 @@ try {
         );
         $number = (string) (((int) ($maxRow['m'] ?? 0)) + 1);
         $sortOrder = ((int) ($maxRow['s'] ?? 0)) + 1;
+        $workplace = contestant_draw_workplace($pdo, $specialtyId);
         db_exec(
             $pdo,
-            'INSERT INTO contestants (specialty_id, number, full_name, group_name, sort_order) VALUES (?, ?, ?, ?, ?)',
-            [$specialtyId, $number, $fullName, $groupName, $sortOrder]
+            'INSERT INTO contestants (specialty_id, number, full_name, group_name, workplace, sort_order)
+             VALUES (?, ?, ?, ?, ?, ?)',
+            [$specialtyId, $number, $fullName, $groupName, $workplace, $sortOrder]
         );
+        flash_set('success', 'Конкурсант сохранён. По жеребьёвке назначено рабочее место №' . $workplace . '.');
     }
-    flash_set('success', 'Конкурсант сохранён.');
 } catch (PDOException $e) {
     flash_set('error', 'Не удалось сохранить конкурсанта.');
 }

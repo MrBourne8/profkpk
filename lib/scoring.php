@@ -55,7 +55,7 @@ function calculate_specialty_results(PDO $pdo, int $specialtyId): array
     );
     $contestants = db_fetch_all(
         $pdo,
-        'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY sort_order, id',
+        'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY workplace IS NULL, workplace, sort_order, id',
         [$specialtyId]
     );
 

@@ -67,11 +67,14 @@ CREATE TABLE IF NOT EXISTS contestants (
     number VARCHAR(32) NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     group_name VARCHAR(128) NULL,
+    -- Рабочее место по жеребьёвке (уникально в рамках компетенции)
+    workplace INT UNSIGNED NULL,
     sort_order INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_contestants_specialty
         FOREIGN KEY (specialty_id) REFERENCES specialties(id) ON DELETE CASCADE,
-    UNIQUE KEY uq_contestant_number (specialty_id, number)
+    UNIQUE KEY uq_contestant_number (specialty_id, number),
+    UNIQUE KEY uq_contestant_workplace (specialty_id, workplace)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS experts (

@@ -132,6 +132,86 @@ function specialty_competition(PDO $pdo, int $specialtyId): ?array
     );
 }
 
+/** Колонка рабочего места + жеребьёвка для уже существующих без РМ. */
+function contestants_ensure_workplace_column(PDO $pdo): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM contestants LIKE 'workplace'")->fetch();
+        if (!$col) {
+            $pdo->exec('ALTER TABLE contestants ADD COLUMN workplace INT UNSIGNED NULL AFTER group_name');
+        }
+        $idx = $pdo->query("SHOW INDEX FROM contestants WHERE Key_name = 'uq_contestant_workplace'")->fetch();
+        if (!$idx) {
+            $pdo->exec('ALTER TABLE contestants ADD UNIQUE KEY uq_contestant_workplace (specialty_id, workplace)');
+        }
+        $specs = db_fetch_all(
+            $pdo,
+            'SELECT DISTINCT specialty_id FROM contestants WHERE workplace IS NULL'
+        );
+        foreach ($specs as $row) {
+            contestants_backfill_workplaces($pdo, (int) $row['specialty_id']);
+        }
+    } catch (Throwable $e) {
+        // таблица ещё не создана (install)
+    }
+    $done = true;
+}
+
+/** Назначить рабочие места конкурсантам компетенции, у которых их ещё нет. */
+function contestants_backfill_workplaces(PDO $pdo, int $specialtyId): void
+{
+    $rows = db_fetch_all(
+        $pdo,
+        'SELECT id FROM contestants WHERE specialty_id = ? AND workplace IS NULL ORDER BY sort_order, id',
+        [$specialtyId]
+    );
+    foreach ($rows as $row) {
+        $wp = contestant_draw_workplace($pdo, $specialtyId);
+        db_exec($pdo, 'UPDATE contestants SET workplace = ? WHERE id = ?', [$wp, (int) $row['id']]);
+    }
+}
+
+/**
+ * Жеребьёвка: случайное свободное рабочее место в диапазоне 1…N
+ * (N = текущее число занятых мест + 1).
+ */
+function contestant_draw_workplace(PDO $pdo, int $specialtyId): int
+{
+    $usedRows = db_fetch_all(
+        $pdo,
+        'SELECT workplace FROM contestants WHERE specialty_id = ? AND workplace IS NOT NULL',
+        [$specialtyId]
+    );
+    $used = [];
+    foreach ($usedRows as $row) {
+        $used[(int) $row['workplace']] = true;
+    }
+    $poolSize = count($used) + 1;
+    $free = [];
+    for ($i = 1; $i <= $poolSize; $i++) {
+        if (!isset($used[$i])) {
+            $free[] = $i;
+        }
+    }
+    if ($free === []) {
+        return $poolSize;
+    }
+    return $free[random_int(0, count($free) - 1)];
+}
+
+function contestant_workplace_label(?array $contestant): string
+{
+    $wp = $contestant['workplace'] ?? null;
+    if ($wp === null || $wp === '') {
+        return '—';
+    }
+    return 'РМ ' . (int) $wp;
+}
+
 function format_points(?float $value): string
 {
     if ($value === null) {

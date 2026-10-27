@@ -21,6 +21,7 @@
                 <thead>
                 <tr>
                     <th>Место</th>
+                    <th>РМ</th>
                     <th>ФИО</th>
                     <th>Группа</th>
                     <?php foreach ($modules as $m): ?>
@@ -33,6 +34,7 @@
                 <?php foreach ($rows as $row): ?>
                     <tr>
                         <td class="place"><?= $row['place'] !== null ? (int) $row['place'] : '—' ?></td>
+                        <td><?= e(contestant_workplace_label($row['contestant'])) ?></td>
                         <td><?= e($row['contestant']['full_name']) ?></td>
                         <td><?= e($row['contestant']['group_name'] ?: '—') ?></td>
                         <?php foreach ($modules as $m): ?>

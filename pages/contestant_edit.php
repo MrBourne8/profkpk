@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 auth_check();
+contestants_ensure_workplace_column($pdo);
 
 $id = get_int('id');
 $specialtyId = get_int('specialty_id');
