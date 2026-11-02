@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $statements = array_filter(array_map('trim', preg_split('/;\s*\n/', $schema) ?: []));
         foreach ($statements as $statement) {
+            // Убрать ведущие SQL-комментарии, не пропуская весь CREATE TABLE
+            $statement = trim(preg_replace('/^(?:\s*--[^\n]*\n)+/u', '', $statement) ?? $statement);
             if ($statement === '' || str_starts_with($statement, '--')) {
                 continue;
             }

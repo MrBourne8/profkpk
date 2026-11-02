@@ -12,7 +12,8 @@ return [
     'base_path' => '/profkpk',
     'session_name' => 'profkpk_session',
     'db' => [
-        'host' => 'localhost',
+        // В OSPanel MySQL обычно на 127.0.1.30 (не localhost / 127.0.0.1)
+        'host' => '127.0.1.30',
         'name' => 'profkpk',
         'user' => 'root',
         'pass' => '',

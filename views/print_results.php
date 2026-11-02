@@ -34,7 +34,7 @@
                 <td><?= $row['place'] !== null ? (int) $row['place'] : '' ?></td>
                 <td><?= e(contestant_workplace_label($row['contestant'])) ?></td>
                 <td><?= e($row['contestant']['full_name']) ?></td>
-                <td><?= e($row['contestant']['group_name'] ?: '') ?></td>
+                <td class="group-label"><?= e($row['contestant']['group_name'] ?: '') ?></td>
                 <?php foreach ($modules as $m): ?>
                     <td class="num"><?= e(format_points($row['module_scores'][(int) $m['id']] ?? null)) ?></td>
                 <?php endforeach; ?>
