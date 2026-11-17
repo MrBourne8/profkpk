@@ -2,6 +2,54 @@
 
 declare(strict_types=1);
 
+// Временная проверка деплоя: ?r=print_expert_blank&specialty_id=1&deploy_check=1
+if (!empty($_GET['deploy_check'])) {
+    auth_require_login();
+    $root = dirname(__DIR__);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "ROOT: $root\n\n";
+    foreach ([
+        'pages/print_expert_blank.php',
+        'views/print_expert_blank_matrix.php',
+        'views/print_expert_blank_per_contestant.php',
+        'views/print_results.php',
+        'lib/helpers.php',
+        'lib/bootstrap.php',
+    ] as $rel) {
+        $path = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $rel);
+        if (!is_file($path)) {
+            echo "MISSING  $rel\n";
+            continue;
+        }
+        $body = (string) file_get_contents($path);
+        $mtime = date('Y-m-d H:i:s', (int) filemtime($path));
+        $flags = [];
+        if (str_contains($body, 'format_points(max(criterion_score_options')) {
+            $flags[] = 'MAX_POINTS';
+        }
+        if (str_contains($body, 'criterion_format_allowed_label')) {
+            $flags[] = 'OLD_ALL_POINTS';
+        }
+        if (str_contains($body, 'Секретарь')) {
+            $flags[] = 'HAS_SECRETARY';
+        }
+        if (str_contains($body, 'print-signatures:chief-only') || (str_contains($body, 'Главный эксперт') && !str_contains($body, 'Секретарь'))) {
+            $flags[] = 'CHIEF_ONLY';
+        }
+        if (str_contains($body, 'deploy_check')) {
+            $flags[] = 'THIS_CHECK';
+        }
+        echo sprintf(
+            "%s  %s  %d bytes  [%s]\n",
+            $mtime,
+            $rel,
+            filesize($path),
+            $flags ? implode(',', $flags) : 'no-markers'
+        );
+    }
+    exit;
+}
+
 $specialtyId = get_int('specialty_id');
 $moduleId = get_int('module_id');
 $expertId = get_int('expert_id');
