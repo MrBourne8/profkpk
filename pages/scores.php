@@ -24,7 +24,12 @@ foreach ($modules as $module) {
         [(int) $module['id']]
     );
 }
-$contestants = db_fetch_all($pdo, 'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY sort_order, id', [$id]);
+contestants_ensure_workplace_column($pdo);
+$contestants = db_fetch_all(
+    $pdo,
+    'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY workplace IS NULL, workplace, sort_order, id',
+    [$id]
+);
 
 $scores = db_fetch_all(
     $pdo,

@@ -17,6 +17,16 @@
         <label>Группа
             <input type="text" name="group_name" value="<?= e($contestant['group_name'] ?? '') ?>">
         </label>
+        <?php if ($isEdit): ?>
+            <p class="help" style="margin:0">
+                Рабочее место: <strong><?= e(contestant_workplace_label($contestant)) ?></strong>
+                (назначено жеребьёвкой при добавлении)
+            </p>
+        <?php else: ?>
+            <p class="help" style="margin:0">
+                Рабочее место будет назначено автоматически жеребьёвкой при сохранении.
+            </p>
+        <?php endif; ?>
         <div class="toolbar">
             <button type="submit" class="btn btn-primary">Сохранить</button>
             <a class="btn btn-ghost" href="<?= e(url('specialty_settings', ['id' => $specialty['id'], 'tab' => 'contestants'])) ?>">Отмена</a>

@@ -44,7 +44,7 @@
                             <?php foreach ($contestants as $c): ?>
                                 <th class="contestant-vhead">
                                     <div class="contestant-vhead-inner">
-                                        <span class="contestant-vnum">№ <?= e($c['number']) ?></span>
+                                        <span class="contestant-vnum"><?= e(contestant_workplace_label($c)) ?></span>
                                         <span class="contestant-vname"><?= e($c['full_name']) ?></span>
                                     </div>
                                 </th>

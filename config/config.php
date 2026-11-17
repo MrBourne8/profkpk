@@ -13,10 +13,11 @@ declare(strict_types=1);
 
 return [
     'app_name' => 'Профессионалы — подсчёт результатов',
-    'base_path' => '/profkpk', // для http://localhost/profkpk/
+    'base_path' => '', // для http://profkpk.local/ (для http://localhost/profkpk/ укажите '/profkpk')
     'session_name' => 'profkpk_session',
     'db' => [
-        'host' => 'localhost',
+        // OSPanel слушает MySQL на 127.0.1.30, не на 127.0.0.1 (localhost)
+        'host' => '127.0.1.30',
         'name' => 'profkpk',
         'user' => 'root',
         'pass' => '',

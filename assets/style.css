@@ -223,6 +223,10 @@ body:not(.has-sidebar) .container {
 .simple-list-meta { color: var(--muted); font-size: 0.9rem; }
 
 .rank-table td { font-size: 1.02rem; }
+.group-label {
+    font-weight: 700;
+    font-size: 1.12em;
+}
 
 @media (max-width: 900px) {
     .app-shell { flex-direction: column; }

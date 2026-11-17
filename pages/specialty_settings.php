@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $id = get_int('id');
 $specialty = specialty_require_access($pdo, $id);
+contestants_ensure_workplace_column($pdo);
 
 $tab = preg_replace('/[^a-z]/', '', (string) ($_GET['tab'] ?? 'contestants')) ?: 'contestants';
 if (!in_array($tab, ['contestants', 'experts', 'criteria', 'general'], true)) {
@@ -24,7 +25,11 @@ foreach ($modules as $module) {
         [(int) $module['id']]
     );
 }
-$contestants = db_fetch_all($pdo, 'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY sort_order, id', [$id]);
+$contestants = db_fetch_all(
+    $pdo,
+    'SELECT * FROM contestants WHERE specialty_id = ? ORDER BY workplace IS NULL, workplace, sort_order, id',
+    [$id]
+);
 $experts = db_fetch_all($pdo, 'SELECT * FROM experts WHERE specialty_id = ? ORDER BY number', [$id]);
 $chiefExperts = auth_is_admin()
     ? db_fetch_all($pdo, "SELECT id, login, display_name FROM users WHERE role = 'chief_expert' ORDER BY display_name, login")
