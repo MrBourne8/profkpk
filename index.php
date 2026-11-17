@@ -15,7 +15,7 @@ if (!empty($_GET['opcache_reset']) && function_exists('opcache_reset')) {
     opcache_reset();
     header('Content-Type: text/plain; charset=utf-8');
     echo "opcache_reset: ok\n";
-    echo 'build: 2026-11-17-maxpoints\n';
+    echo "build: 2026-11-17-maxpoints\n";
     echo 'root: ' . __DIR__ . "\n";
     exit;
 }
