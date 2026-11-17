@@ -51,6 +51,7 @@
 </div>
 
 <div class="print-signatures">
+    <!-- print-signatures:chief-only -->
     <div>
         <p>Главный эксперт __________________ / ____________ /</p>
     </div>
