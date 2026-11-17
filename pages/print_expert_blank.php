@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Временная проверка деплоя: ?r=print_expert_blank&specialty_id=1&deploy_check=1
 if (!empty($_GET['deploy_check'])) {
-    auth_require_login();
+    auth_check();
     $root = dirname(__DIR__);
     header('Content-Type: text/plain; charset=utf-8');
     echo "ROOT: $root\n\n";
