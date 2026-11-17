@@ -51,6 +51,7 @@ if (!$printExperts || !$modules): ?>
                             <?php foreach ($contestantsList as $c): ?>
                                 <th class="contestant-vhead">
                                     <div class="contestant-vhead-inner">
+                                        <span class="contestant-vnum"><?= e(contestant_workplace_label($c)) ?></span>
                                         <span class="contestant-vname"><?= e($c['full_name']) ?></span>
                                     </div>
                                 </th>
@@ -62,7 +63,8 @@ if (!$printExperts || !$modules): ?>
                             <tr>
                                 <td class="cell-aspect"><?= e($cr['title']) ?></td>
                                 <td class="cell-desc"><?= e($cr['description'] ?: '') ?></td>
-                                <td class="cell-points"><?= e(criterion_format_allowed_label($cr)) ?></td>
+                                <!-- print-points:max -->
+                                <td class="cell-points"><?= e(format_points(max(criterion_score_options($cr)))) ?></td>
                                 <?php foreach ($contestantsList as $c): ?>
                                     <td class="empty-cell"></td>
                                 <?php endforeach; ?>
