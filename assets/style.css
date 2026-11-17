@@ -222,7 +222,31 @@ body:not(.has-sidebar) .container {
 .simple-list-title { font-weight: 700; font-size: 1.05rem; }
 .simple-list-meta { color: var(--muted); font-size: 0.9rem; }
 
+.rank-table {
+    table-layout: fixed;
+    width: 100%;
+}
 .rank-table td { font-size: 1.02rem; }
+.rank-table th,
+.rank-table td {
+    padding: 0.55rem 0.5rem;
+}
+.rank-table th {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.25;
+    vertical-align: bottom;
+}
+.rank-table .col-place { width: 4%; }
+.rank-table .col-rm { width: 5%; }
+.rank-table .col-name { width: 26%; }
+.rank-table .col-group { width: 7%; }
+.rank-table .col-module { font-size: 0.78rem; }
+.rank-table .col-total { width: 6%; }
+.card > .table-wrap:has(.rank-table) {
+    overflow-x: hidden;
+}
 .group-label {
     font-weight: 700;
     font-size: 1.12em;

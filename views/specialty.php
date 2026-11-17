@@ -29,27 +29,27 @@
             <table class="rank-table">
                 <thead>
                 <tr>
-                    <th>Место</th>
-                    <th>РМ</th>
-                    <th>ФИО</th>
-                    <th>Группа</th>
+                    <th class="col-place">Место</th>
+                    <th class="col-rm">РМ</th>
+                    <th class="col-name">ФИО</th>
+                    <th class="col-group">Группа</th>
                     <?php foreach ($modules as $m): ?>
-                        <th class="num"><?= e($m['title']) ?></th>
+                        <th class="num col-module"><?= e($m['title']) ?></th>
                     <?php endforeach; ?>
-                    <th class="num">Итого</th>
+                    <th class="num col-total">Итого</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td class="place"><?= $row['place'] !== null ? (int) $row['place'] : '—' ?></td>
-                        <td><?= e(contestant_workplace_label($row['contestant'])) ?></td>
-                        <td><strong><?= e($row['contestant']['full_name']) ?></strong></td>
-                        <td class="group-label"><?= e($row['contestant']['group_name'] ?: '—') ?></td>
+                        <td class="place col-place"><?= $row['place'] !== null ? (int) $row['place'] : '—' ?></td>
+                        <td class="col-rm"><?= e(contestant_workplace_label($row['contestant'])) ?></td>
+                        <td class="col-name"><strong><?= e($row['contestant']['full_name']) ?></strong></td>
+                        <td class="group-label col-group"><?= e($row['contestant']['group_name'] ?: '—') ?></td>
                         <?php foreach ($modules as $m): ?>
-                            <td class="num"><?= e(format_points($row['module_scores'][(int) $m['id']] ?? null)) ?></td>
+                            <td class="num col-module"><?= e(format_points($row['module_scores'][(int) $m['id']] ?? null)) ?></td>
                         <?php endforeach; ?>
-                        <td class="num"><strong><?= e(format_points($row['total'])) ?></strong></td>
+                        <td class="num col-total"><strong><?= e(format_points($row['total'])) ?></strong></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

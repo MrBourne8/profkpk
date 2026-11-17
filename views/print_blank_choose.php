@@ -6,10 +6,6 @@
     <a class="btn btn-ghost" href="<?= e(url('specialty', ['id' => $specialty['id']])) ?>">← К рейтингу</a>
 </div>
 
-<div class="alert" style="background:#dcfce7;border:1px solid #16a34a;color:#14532d;padding:0.75rem 1rem;margin-bottom:1rem">
-    Сборка на сервере: <strong>2026-11-17-maxpoints</strong> — если этой зелёной плашки нет, PHP читает другую папку сайта.
-</div>
-
 <div class="card">
     <p class="muted" style="margin-top:0">
         Экспертов: <?= count($printExperts) ?>,
