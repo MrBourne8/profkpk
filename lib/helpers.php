@@ -281,6 +281,18 @@ function criterion_format_allowed_label(array $criterion): string
     return implode(', ', array_map(static fn($v) => format_points($v), $opts));
 }
 
+/** Максимально возможный балл аспекта (для бланков экспертов). */
+function criterion_max_points(array $criterion): float
+{
+    $opts = criterion_score_options($criterion);
+    return $opts ? (float) max($opts) : 0.0;
+}
+
+function criterion_format_max_points_label(array $criterion): string
+{
+    return format_points(criterion_max_points($criterion));
+}
+
 function criterion_is_allowed_score(array $criterion, float $points): bool
 {
     foreach (criterion_score_options($criterion) as $opt) {

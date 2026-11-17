@@ -63,7 +63,7 @@ if (!$printExperts || !$modules): ?>
                             <tr>
                                 <td class="cell-aspect"><?= e($cr['title']) ?></td>
                                 <td class="cell-desc"><?= e($cr['description'] ?: '') ?></td>
-                                <td class="cell-points"><?= e(criterion_format_allowed_label($cr)) ?></td>
+                                <td class="cell-points"><?= e(format_points(max(criterion_score_options($cr)))) ?></td>
                                 <?php foreach ($contestantsList as $c): ?>
                                     <td class="empty-cell"></td>
                                 <?php endforeach; ?>

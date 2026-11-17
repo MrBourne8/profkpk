@@ -47,7 +47,7 @@ if (!$printExperts || !$contestantsList || !$modules): ?>
                             <th style="width:2.5rem">№</th>
                             <th style="width:12rem">Аспект</th>
                             <th>Расшифровка аспекта</th>
-                            <th style="width:7rem">Допустимые баллы</th>
+                            <th style="width:7rem">Баллы</th>
                             <th style="width:5rem">Оценка</th>
                         </tr>
                         </thead>
@@ -57,7 +57,7 @@ if (!$printExperts || !$contestantsList || !$modules): ?>
                                 <td><?= $i + 1 ?></td>
                                 <td><?= e($cr['title']) ?></td>
                                 <td><?= e($cr['description'] ?: '') ?></td>
-                                <td><?= e(criterion_format_allowed_label($cr)) ?></td>
+                                <td><?= e(format_points(max(criterion_score_options($cr)))) ?></td>
                                 <td class="empty-cell"></td>
                             </tr>
                         <?php endforeach; ?>
